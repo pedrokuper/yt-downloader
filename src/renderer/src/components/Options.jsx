@@ -1,8 +1,12 @@
-export default function Options({ options = [] }) {
+export default function Options({ options = [], onChange, name }) {
 	return (
-		<select className="border">
+		<select onChange={onChange} name={name} className="border">
 			{options?.map((o) => {
-				return <option value={o.value}>{o.label}</option>;
+				return (
+					<option key={o.value} value={o.value}>
+						{o.label}
+					</option>
+				);
 			})}
 		</select>
 	);

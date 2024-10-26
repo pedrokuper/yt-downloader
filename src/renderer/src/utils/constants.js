@@ -1,7 +1,8 @@
 export const BITRATES = [
+	{ value: 64, label: "64kbps" },
 	{ value: 128, label: "128kbps" },
-	{ value: 160, label: "160kbps" },
 	{ value: 192, label: "192kbps" },
+	{ value: 256, label: "256kbps" },
 	{ value: 320, label: "320kbps" },
 ];
 

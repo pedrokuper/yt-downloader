@@ -3,14 +3,24 @@ import Options from "./components/Options";
 import { BITRATES, FORMATS } from "./utils/constants";
 import Table from "./components/Table";
 function App() {
-	const [url, setUrl] = useState("");
 	const [options, setOptions] = useState({
-		format: "mp4",
-		quality: "lowest",
+		format: "mp3",
 		bitrate: 128,
-		url: "https://www.youtube.com/watch?v=iAP9AF6DCu4",
+		url: "",
 	});
-	const conversion = () => window.electron.conversion(options);
+
+	const conversion = () => {
+		console.log(options);
+		if (options.url && options.format) window.electron.conversion(options);
+	};
+
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setOptions((prevOpts) => ({
+			...prevOpts,
+			[name]: value,
+		}));
+	};
 
 	return (
 		<>
@@ -21,7 +31,7 @@ function App() {
 				<hr className="m-2" />
 				<div className="flex flex-col gap-4 items-center ">
 					<input
-						onChange={(e) => setUrl(e.target.value)}
+						onChange={handleChange}
 						className="border border-zinc-400 w-1/2 p-2 rounded-xl shadow-lg"
 						type="text"
 						name="url"
@@ -30,11 +40,15 @@ function App() {
 					/>
 					<label htmlFor="">
 						Formato
-						<Options options={FORMATS} />
+						<Options name="format" onChange={handleChange} options={FORMATS} />
 					</label>
-					<label htmlFor="">
+					<label htmlFor="bitrate">
 						Bitrate
-						<Options options={BITRATES} />
+						<Options
+							name="bitrate"
+							options={BITRATES}
+							onChange={handleChange}
+						/>
 					</label>
 					<div className="flex w-1/2 items-center gap-5">
 						<h5>Guardar</h5>
@@ -46,7 +60,6 @@ function App() {
 						</button>
 					</div>
 					<button
-						disabled
 						className="border w-1/2 rounded-xl shadow-md"
 						onClick={conversion}
 					>
