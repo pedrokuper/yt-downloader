@@ -3,6 +3,8 @@ import Options from "./components/Options";
 import { BITRATES, FORMATS, VIDEO_QUALITY } from "./utils/constants";
 import Table from "./components/Table";
 function App() {
+	const [downloadHistory, setDownloadHistory] = useState([]);
+
 	const [defaultDownloadPath, setDefaultDownloadPath] = useState("");
 	const [options, setOptions] = useState({
 		format: "mp3",
@@ -13,12 +15,19 @@ function App() {
 
 	useEffect(() => {
 		if (!options?.path) handleDefaultDownloadPath();
+		handleDownloadHistory();
 	}, [options?.path]);
 
-	const conversion = () => {
+	const conversion = async () => {
 		console.log(options);
-		if (options.url && options.format) window.electron.conversion(options);
+		if (options.url && options.format)
+			await window.electron.conversion(options);
 	};
+
+	async function handleDownloadHistory() {
+		const history = await window.electron.getDownloadHistory();
+		setDownloadHistory(history);
+	}
 
 	async function openDialog() {
 		const dialogConfig = {
@@ -125,7 +134,7 @@ function App() {
 					</button>
 				</div>
 				<hr className="m-2" />
-				<Table files={files} />
+				<Table files={downloadHistory} />
 			</section>
 		</>
 	);

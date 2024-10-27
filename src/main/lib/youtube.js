@@ -4,7 +4,7 @@ import ffmpeg from "fluent-ffmpeg";
 import ffmpegPath from "ffmpeg-static";
 import path from "path";
 
-export function conversion({
+export async function conversion({
 	url = "",
 	quality = "",
 	format = "",
@@ -14,20 +14,18 @@ export function conversion({
 		throw new Error("URL is required");
 	}
 
+	let data;
+
 	if (format === "mp3") {
-		convertToMp3(url, quality, path);
+		data = await convertToMp3(url, quality, path);
+		console.log("🚀 ~ data convertToMp3:", data);
 	} else {
-		convertToMp4(url, quality, path);
+		data = await convertToMp4(url, quality, path);
+		console.log("🚀 ~ data convertToMp4:", data);
 	}
+	return data;
 }
 
-/**
- * Retrieves the file name for a YouTube video based on its title and the specified file type.
- * Replaces any invalid characters in the title with a hyphen.
- *
- * @param {string} fileType - The file extension or type to append to the video title.
- * @returns {Promise<string>} A promise that resolves to the sanitized file name.
- */
 async function getFileName(fileType, url) {
 	const info = await ytdl.getBasicInfo(url);
 	return `${info.videoDetails.title}${fileType}`.replace(/[/\\?%*:|"<>]/g, "-");
@@ -64,7 +62,12 @@ async function convertToMp3(url, quality = 128, dlLoc) {
 				})
 				.on("end", () => {
 					console.log("MP3 conversion complete:", fileName);
-					resolve(mp3FilePath);
+					resolve({
+						name: fileName,
+						url: url,
+						size: "1.2 MB",
+						location: dlLoc,
+					});
 				});
 
 			// Pipe the converted audio to the file

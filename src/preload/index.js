@@ -8,13 +8,16 @@ if (!process.contextIsolated) {
 try {
 	contextBridge.exposeInMainWorld("electron", {
 		locale: navigator.language,
-		conversion: (opts) => ipcRenderer.invoke("conversion", opts),
+		conversion: async (opts, history) =>
+			await ipcRenderer.invoke("conversion", opts, history),
 		openDialog: (method, config) => {
 			return ipcRenderer.invoke("dialog", method, config);
 		},
 		openPath: (path) => ipcRenderer.invoke("open-path", path),
 		defaultDownloadLoc: async () =>
 			await ipcRenderer.invoke("defaultDownloadLoc"),
+		getDownloadHistory: async () =>
+			await ipcRenderer.invoke("getDownloadHistory"),
 	});
 } catch (error) {
 	console.error(error);

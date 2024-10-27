@@ -3,18 +3,35 @@ import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { conversion } from "./lib/youtube";
+import Store from "./lib/store";
 
-function createWindow() {
-	const mainWindow = new BrowserWindow({
-		width: 900,
-		height: 670,
+const store = new Store({
+	configName: "user-preferences",
+	defaults: {
+		windowBounds: { width: 800, height: 600 },
+	},
+});
+
+const downloadHistory = new Store({
+	configName: "download-history",
+	defaults: {
+		history: [],
+	},
+});
+
+let mainWindow;
+
+function createWindow(opts = {}) {
+	mainWindow = new BrowserWindow({
 		show: false,
 		autoHideMenuBar: true,
 		...(process.platform === "linux" ? { icon } : {}),
+
 		webPreferences: {
 			preload: join(__dirname, "../preload/index.js"),
 			sandbox: false,
 		},
+		...opts,
 	});
 
 	mainWindow.on("ready-to-show", () => {
@@ -39,6 +56,9 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+	let his = downloadHistory.get("history") ?? [];
+	downloadHistory.set("history", his); // Initialize history if empty
+	// let { width, height } = store.get("windowBounds");
 	// Set app user model id for windows
 	electronApp.setAppUserModelId("com.electron");
 
@@ -49,8 +69,10 @@ app.whenReady().then(() => {
 		optimizer.watchWindowShortcuts(window);
 	});
 
-	ipcMain.handle("conversion", (_, opts) => {
-		conversion(opts);
+	ipcMain.handle("conversion", async (_, opts) => {
+		const res = await conversion(opts);
+		his.push(res);
+		downloadHistory.set("history", his); // Save updated history
 	});
 	ipcMain.handle("dialog", async (_, method, params) => {
 		const { filePaths } = await dialog[method](params);
@@ -70,12 +92,25 @@ app.whenReady().then(() => {
 		return app.getPath("downloads");
 	});
 
-	createWindow();
+	ipcMain.handle("getDownloadHistory", () => {
+		return downloadHistory.get("history");
+	});
+
+	let { width, height } = store.get("windowBounds");
+	createWindow({ width, height });
 
 	app.on("activate", function () {
 		// On macOS it's common to re-create a window in the app when the
 		// dock icon is clicked and there are no other windows open.
 		if (BrowserWindow.getAllWindows().length === 0) createWindow();
+	});
+
+	mainWindow.on("resize", () => {
+		// The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
+		// the height, width, and x and y coordinates.
+		let { width, height } = mainWindow.getBounds();
+		// Now that we have them, save them using the `set` method.
+		store.set("windowBounds", { width, height });
 	});
 });
 
