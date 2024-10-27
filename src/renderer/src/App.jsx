@@ -142,41 +142,11 @@ function App() {
 
 export default App;
 
-const files = [
-	{
-		name: "document.pdf",
-		url: "https://youtu.be/i23iF0h9jmk",
-		size: "1.2 MB",
-		location: "/documents",
-	},
-	{
-		name: "image.jpg",
-		url: "https://youtu.be/i23iF0h9jmk",
-		size: "800 KB",
-		location: "/images",
-	},
-	{
-		name: "document.pdf",
-		url: "https://youtu.be/i23iF0h9jmk",
-		size: "1.2 MB",
-		location: "/documents",
-	},
-	{
-		name: "image.jpg",
-		url: "https://youtu.be/i23iF0h9jmk",
-		size: "800 KB",
-		location: "/images",
-	},
-	{
-		name: "document.pdf",
-		url: "https://youtu.be/i23iF0h9jmk",
-		size: "1.2 MB",
-		location: "/documents",
-	},
-	{
-		name: "image.jpg",
-		url: "https://youtu.be/i23iF0h9jmk",
-		size: "800 KB",
-		location: "/images",
-	},
-];
+// const files = [
+// 	{
+// 		name: "document.pdf",
+// 		url: "https://youtu.be/i23iF0h9jmk",
+// 		size: "1.2 MB",
+// 		location: "/documents",
+// 	},
+// ];
