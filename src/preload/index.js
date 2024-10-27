@@ -13,6 +13,8 @@ try {
 			return ipcRenderer.invoke("dialog", method, config);
 		},
 		openPath: (path) => ipcRenderer.invoke("open-path", path),
+		defaultDownloadLoc: async () =>
+			await ipcRenderer.invoke("defaultDownloadLoc"),
 	});
 } catch (error) {
 	console.error(error);

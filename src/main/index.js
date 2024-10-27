@@ -65,6 +65,11 @@ app.whenReady().then(() => {
 			return { success: false, error: error.message };
 		}
 	});
+
+	ipcMain.handle("defaultDownloadLoc", () => {
+		return app.getPath("downloads");
+	});
+
 	createWindow();
 
 	app.on("activate", function () {

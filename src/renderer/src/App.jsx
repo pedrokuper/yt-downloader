@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Options from "./components/Options";
 import { BITRATES, FORMATS, VIDEO_QUALITY } from "./utils/constants";
 import Table from "./components/Table";
 function App() {
+	const [defaultDownloadPath, setDefaultDownloadPath] = useState("");
 	const [options, setOptions] = useState({
 		format: "mp3",
 		quality: null,
 		url: "",
-		path: "",
+		path: defaultDownloadPath ?? "",
 	});
+
+	useEffect(() => {
+		if (!options?.path) handleDefaultDownloadPath();
+	}, [options?.path]);
 
 	const conversion = () => {
 		console.log(options);
@@ -50,6 +55,11 @@ function App() {
 		}
 	};
 
+	async function handleDefaultDownloadPath() {
+		const defaultPath = await window.electron.defaultDownloadLoc();
+		setDefaultDownloadPath(defaultPath);
+	}
+
 	const LABEL = options?.format == "mp3" ? "Bitrate" : "Calidad de Video";
 	const QUALITY_OPTIONS = options?.format == "mp3" ? BITRATES : VIDEO_QUALITY;
 
@@ -67,7 +77,7 @@ function App() {
 						type="text"
 						name="url"
 						id="url"
-						placeholder="Paste your Youtube URL!"
+						placeholder="Pega la url Youtube"
 					/>
 					<label htmlFor="">
 						Formato
@@ -88,13 +98,24 @@ function App() {
 						>
 							Elegir Carpeta de Destino
 						</button>
-						<a
-							href={`${options.path}`}
-							className="w-1/2 hover:underline"
-							onClick={handleShowFile}
-						>
-							{options.path}
-						</a>
+
+						{options.path ? (
+							<a
+								href={`${options.path}`}
+								className="w-1/2 hover:underline"
+								onClick={handleShowFile}
+							>
+								{options.path}
+							</a>
+						) : (
+							<a
+								href={`${options.path}`}
+								className="w-1/2 hover:underline"
+								onClick={handleShowFile}
+							>
+								{defaultDownloadPath}
+							</a>
+						)}
 					</div>
 					<button
 						className="border w-1/2 rounded-xl shadow-md"
