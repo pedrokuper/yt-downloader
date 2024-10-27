@@ -1,17 +1,21 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer } from "electron";
 // import { electronAPI } from '@electron-toolkit/preload'
 
 if (!process.contextIsolated) {
-  throw new Error('contextIsolation must be enabled in the BrowserWindow')
+	throw new Error("contextIsolation must be enabled in the BrowserWindow");
 }
 
 try {
-  contextBridge.exposeInMainWorld('electron', {
-    locale: navigator.language,
-    conversion: (opts) => ipcRenderer.invoke('conversion', opts)
-  })
+	contextBridge.exposeInMainWorld("electron", {
+		locale: navigator.language,
+		conversion: (opts) => ipcRenderer.invoke("conversion", opts),
+		openDialog: (method, config) => {
+			return ipcRenderer.invoke("dialog", method, config);
+		},
+		openPath: (path) => ipcRenderer.invoke("open-path", path),
+	});
 } catch (error) {
-  console.error(error)
+	console.error(error);
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

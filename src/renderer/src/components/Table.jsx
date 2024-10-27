@@ -13,6 +13,7 @@ export default function Table({ files = [] }) {
 					<thead>
 						<tr className="bg-gray-100">
 							<th className="text-left p-2 border-b font-semibold">Name</th>
+							<th className="text-left p-2 border-b font-semibold">URL</th>
 							<th className="text-left p-2 border-b font-semibold">Size</th>
 							<th className="text-left p-2 border-b font-semibold">Location</th>
 						</tr>
@@ -21,6 +22,7 @@ export default function Table({ files = [] }) {
 						{files.map((file, index) => (
 							<tr key={index} className="border-b hover:bg-gray-50">
 								<td className="p-2">{file.name}</td>
+								<td className="p-2">{file.url}</td>
 								<td className="p-2">{file.size}</td>
 								<td
 									className="p-2 cursor-pointer"
