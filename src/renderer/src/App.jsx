@@ -24,7 +24,7 @@ function App() {
 			"showOpenDialog",
 			dialogConfig
 		);
-		setOptions((...prevOpts) => ({
+		setOptions((prevOpts) => ({
 			...prevOpts,
 			path: path,
 		}));

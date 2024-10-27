@@ -49,8 +49,6 @@ app.whenReady().then(() => {
 		optimizer.watchWindowShortcuts(window);
 	});
 
-	// IPC test
-
 	ipcMain.handle("conversion", (_, opts) => {
 		conversion(opts);
 	});

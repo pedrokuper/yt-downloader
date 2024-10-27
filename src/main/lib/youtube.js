@@ -33,13 +33,13 @@ async function getFileName(fileType, url) {
 	return `${info.videoDetails.title}${fileType}`.replace(/[/\\?%*:|"<>]/g, "-");
 }
 
-async function convertToMp3(url, quality = 128, path) {
+async function convertToMp3(url, quality = 128, dlLoc) {
 	try {
 		ffmpeg.setFfmpegPath(ffmpegPath);
 
-		const fileName = getFileName(".mp3", url);
+		const fileName = await getFileName(".mp3", url);
 
-		const mp3FilePath = path.join(__dirname, fileName);
+		const mp3FilePath = path.join(dlLoc, fileName);
 
 		return new Promise((resolve, reject) => {
 			const videoStream = ytdl(url, {
