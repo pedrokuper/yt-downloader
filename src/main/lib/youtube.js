@@ -2,7 +2,7 @@ import fs from "fs";
 import ytdl from "@distube/ytdl-core";
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegPath from "ffmpeg-static";
-import path from "path";
+import path, { parse } from "path";
 
 export async function conversion({
 	url = "",
@@ -60,12 +60,15 @@ async function convertToMp3(url, quality = 128, dlLoc) {
 					console.error("Error during conversion:", err);
 					reject(new Error("Failed to convert to MP3"));
 				})
-				.on("end", () => {
-					console.log("MP3 conversion complete:", fileName);
+				.on("end", async () => {
+					const file = dlLoc + "/" + fileName;
+					const fileSize = await getFileSize(file);
+					const fileSizeText = setFileSizeText(fileSize);
+					console.error("Converted OK");
 					resolve({
 						name: fileName,
 						url: url,
-						size: "1.2 MB",
+						size: fileSizeText,
 						location: dlLoc,
 					});
 				});
@@ -83,6 +86,24 @@ async function convertToMp3(url, quality = 128, dlLoc) {
 		console.error("Error getting video info:", error);
 		throw new Error("Failed to get video information");
 	}
+}
+
+async function getFileSize(file) {
+	try {
+		const stats = await fs.promises.stat(file);
+		const size = stats.size / 1000;
+		return size;
+	} catch (err) {
+		console.log(`File doesn't exist.`);
+		return 0;
+	}
+}
+
+function setFileSizeText(size) {
+	const isMB = size >= 1024;
+	const readableSize = isMB ? size / 1000 : size;
+	const unit = isMB ? "MB" : "KB";
+	return parseFloat(readableSize).toFixed(2) + unit;
 }
 
 async function convertToMp4(url, quality = "lowest", dlLoc) {
