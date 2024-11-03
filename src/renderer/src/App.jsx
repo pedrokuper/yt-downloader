@@ -3,6 +3,7 @@ import Options from "./components/Options";
 import { BITRATES, FORMATS, VIDEO_QUALITY } from "./utils/constants";
 import Table from "./components/Table";
 function App() {
+	console.log("App");
 	const [downloadHistory, setDownloadHistory] = useState([]);
 
 	const [options, setOptions] = useState({
@@ -13,13 +14,26 @@ function App() {
 	});
 
 	useEffect(() => {
+		console.log("useEffect 1");
 		if (!options?.path) handleDefaultDownloadPath();
 		handleDownloadHistory();
 	}, [options?.path]);
 
+	useEffect(() => {
+		const unsubscribe = window.electron.onDownloadUpdate((newDownload) => {
+			setDownloadHistory((prev) => [...prev, newDownload]);
+		});
+
+		return () => {
+			if (unsubscribe) unsubscribe();
+		};
+	}, []);
+
 	const conversion = async () => {
-		if (options.url && options.format)
+		if (options.url && options.format) {
 			await window.electron.conversion(options);
+			handleDownloadHistory();
+		}
 	};
 
 	async function handleDownloadHistory() {

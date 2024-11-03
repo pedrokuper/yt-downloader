@@ -18,6 +18,13 @@ try {
 			await ipcRenderer.invoke("defaultDownloadLoc"),
 		getDownloadHistory: async () =>
 			await ipcRenderer.invoke("getDownloadHistory"),
+		onDownloadUpdate: (callback) => {
+			const subscription = (_, download) => callback(download);
+			ipcRenderer.on("download-update", subscription);
+			return () => {
+				ipcRenderer.removeListener("download-update", subscription);
+			};
+		},
 	});
 } catch (error) {
 	console.error(error);
