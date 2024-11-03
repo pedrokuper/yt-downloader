@@ -14,7 +14,6 @@ function App() {
 	});
 
 	useEffect(() => {
-		console.log("useEffect 1");
 		if (!options?.path) handleDefaultDownloadPath();
 		handleDownloadHistory();
 	}, [options?.path]);
