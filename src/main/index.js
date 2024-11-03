@@ -5,13 +5,14 @@ import icon from "../../resources/icon.png?asset";
 import { conversion } from "./lib/youtube";
 import Store from "./lib/store";
 
+//Declare preferences store
 const store = new Store({
 	configName: "user-preferences",
 	defaults: {
 		windowBounds: { width: 800, height: 600 },
 	},
 });
-
+//Declare download history store
 const downloadHistory = new Store({
 	configName: "download-history",
 	defaults: {
@@ -69,16 +70,19 @@ app.whenReady().then(() => {
 		optimizer.watchWindowShortcuts(window);
 	});
 
+	//Main logic for the app. Same principle here. We declare a handle to make it usable from the frontend making a bridge with the preload.js file. This calls conversion, which will send the options from the frontend to the backend and then execute the conversion function and if the download is success, will add to the history.
 	ipcMain.handle("conversion", async (_, opts) => {
-		const res = await conversion(opts);
-		his.push(res);
-		downloadHistory.set("history", his); // Save updated history
+		const response = await conversion(opts);
+		his.push(response);
+		downloadHistory.set("history", his);
 	});
+	//To open the dialog window to save download locations
 	ipcMain.handle("dialog", async (_, method, params) => {
 		const { filePaths } = await dialog[method](params);
 		const [path] = filePaths;
 		return path;
 	});
+	//To open default or selected download location
 	ipcMain.handle("open-path", async (_, path) => {
 		try {
 			await shell.openPath(path);
@@ -88,10 +92,12 @@ app.whenReady().then(() => {
 		}
 	});
 
+	//NOTE This func return the default "downloads" path for different OS (app.getPath). The ipcMain.handle part is to connect the preload with the renderer, to avoid manipulating the main with the renderer, which is the frontend part.
 	ipcMain.handle("defaultDownloadLoc", () => {
 		return app.getPath("downloads");
 	});
 
+	//NOTE This func return the download-history json, created using the store setter
 	ipcMain.handle("getDownloadHistory", () => {
 		return downloadHistory.get("history");
 	});
