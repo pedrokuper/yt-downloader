@@ -5,12 +5,11 @@ import Table from "./components/Table";
 function App() {
 	const [downloadHistory, setDownloadHistory] = useState([]);
 
-	const [defaultDownloadPath, setDefaultDownloadPath] = useState("");
 	const [options, setOptions] = useState({
 		format: "mp3",
 		quality: null,
 		url: "",
-		path: defaultDownloadPath ?? "",
+		path: "",
 	});
 
 	useEffect(() => {
@@ -66,7 +65,10 @@ function App() {
 
 	async function handleDefaultDownloadPath() {
 		const defaultPath = await window.electron.defaultDownloadLoc();
-		setDefaultDownloadPath(defaultPath);
+		setOptions((prevOpts) => ({
+			...prevOpts,
+			path: defaultPath,
+		}));
 	}
 
 	const LABEL = options?.format == "mp3" ? "Bitrate" : "Calidad de Video";
