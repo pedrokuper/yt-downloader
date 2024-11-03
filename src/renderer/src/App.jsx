@@ -18,7 +18,6 @@ function App() {
 	}, [options?.path]);
 
 	const conversion = async () => {
-		console.log(options);
 		if (options.url && options.format)
 			await window.electron.conversion(options);
 	};
@@ -28,6 +27,7 @@ function App() {
 		setDownloadHistory(history);
 	}
 
+	//TODO - Make into lib/utils
 	async function openDialog() {
 		const dialogConfig = {
 			title: "Elegir un directorio",
@@ -51,8 +51,8 @@ function App() {
 		}));
 	};
 
-	const handleShowFile = async (e) => {
-		e.preventDefault();
+	//TODO - Make into lib/utils
+	const handleShowFile = async () => {
 		try {
 			const result = await window.electron.openPath(options.path);
 			if (!result.success) {
@@ -143,12 +143,3 @@ function App() {
 }
 
 export default App;
-
-// const files = [
-// 	{
-// 		name: "document.pdf",
-// 		url: "https://youtu.be/i23iF0h9jmk",
-// 		size: "1.2 MB",
-// 		location: "/documents",
-// 	},
-// ];
