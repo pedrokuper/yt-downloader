@@ -1,5 +1,18 @@
 export default function Table({ files = [] }) {
 	if (files.length < 1) return null;
+
+	//TODO - Make into lib/utils
+	const handleShowFile = async (location) => {
+		try {
+			const result = await window.electron.openPath(location);
+			if (!result.success) {
+				console.error("Failed to open path:", result.error);
+			}
+		} catch (error) {
+			console.error("Error opening path:", error);
+		}
+	};
+
 	return (
 		<>
 			<div className="flex flex-col items-center justify-center">
@@ -22,11 +35,19 @@ export default function Table({ files = [] }) {
 						{files.map((file, index) => (
 							<tr key={index} className="border-b hover:bg-gray-50">
 								<td className="p-2">{file.name}</td>
-								<td className="p-2">{file.url}</td>
+								<td className="p-2">
+									<a
+										className="hover:bg-sky-300 underline"
+										target="_blank"
+										href={file.url}
+									>
+										{file.url}
+									</a>
+								</td>
 								<td className="p-2">{file.size}</td>
 								<td
 									className="p-2 cursor-pointer"
-									onClick={() => alert("Abre la localizacion del archivo")}
+									onClick={() => handleShowFile(file.location)}
 								>
 									{file.location}
 								</td>
