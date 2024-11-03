@@ -113,7 +113,7 @@ function App() {
 						{options.path ? (
 							<a
 								href={`${options.path}`}
-								className="w-1/2 hover:underline"
+								className="w-1/2 hover:underline cursor-pointer"
 								onClick={handleShowFile}
 							>
 								{options.path}
@@ -124,7 +124,7 @@ function App() {
 								className="w-1/2 hover:underline"
 								onClick={handleShowFile}
 							>
-								{defaultDownloadPath}
+								{options.path}
 							</a>
 						)}
 					</div>
