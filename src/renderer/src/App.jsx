@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Options from "./components/Options";
 import { BITRATES, FORMATS, VIDEO_QUALITY } from "./utils/constants";
 import Table from "./components/Table";
+import DownloadProgress from "./components/DownloadProgress";
 function App() {
 	console.log("App");
 	const [downloadHistory, setDownloadHistory] = useState([]);
@@ -147,6 +148,7 @@ function App() {
 					>
 						Descargar
 					</button>
+					<DownloadProgress />
 				</div>
 				<hr className="m-2" />
 				<Table files={downloadHistory} />

@@ -74,9 +74,14 @@ app.whenReady().then(() => {
 		event.reply("download-update", download);
 	});
 
+	ipcMain.on("download-progress", (event, download) => {
+		event.reply("download-progress", download);
+	});
+
 	//Main logic for the app. Same principle here. We declare a handle to make it usable from the frontend making a bridge with the preload.js file. This calls conversion, which will send the options from the frontend to the backend and then execute the conversion function and if the download is success, will add to the history.
-	ipcMain.handle("conversion", async (_, opts) => {
-		const response = await conversion(opts);
+	ipcMain.handle("conversion", async (e, opts) => {
+		const win = e.sender.getOwnerBrowserWindow();
+		const response = await conversion(opts, win);
 		his.push(response);
 		downloadHistory.set("history", his);
 	});
