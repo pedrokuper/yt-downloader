@@ -121,7 +121,7 @@ function App() {
 							onClick={openDialog}
 							className="border w-1/2 rounded-xl shadow-md"
 						>
-							Elegir Carpeta de Destino
+							Guardar En...
 						</button>
 
 						{options.path ? (
