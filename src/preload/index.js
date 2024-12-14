@@ -25,6 +25,13 @@ try {
 				ipcRenderer.removeListener("download-update", subscription);
 			};
 		},
+		onDownloadProgress: (callback) => {
+			const subscription = (_, progress) => callback(progress);
+			ipcRenderer.on("download-progress", subscription);
+			return () => {
+				ipcRenderer.removeListener("download-progress", subscription);
+			};
+		},
 	});
 } catch (error) {
 	console.error(error);

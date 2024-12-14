@@ -16,8 +16,4 @@ export const VIDEO_QUALITY = [
 	{ value: "small", label: "Baja" },
 	{ value: "medium", label: "Media" },
 	{ value: "large", label: "Alta" },
-	{ value: "hd720", label: "720p" },
-	{ value: "hd1080", label: "1080p" },
-	{ value: "hd1440", label: "2K" },
-	{ value: "hd2160", label: "4K" },
 ];
