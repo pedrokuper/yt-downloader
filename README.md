@@ -10,7 +10,7 @@
 
 - [ ] Trim Audio to Download
 - [ ] Trim Video to Download
-- [ ] Progress Bar
+- [x] Progress Bar
 
 ### History
 
