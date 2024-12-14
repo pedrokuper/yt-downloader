@@ -15,6 +15,9 @@ export default function Table({ files = [] }) {
 
 	return (
 		<>
+			<button className="bg-slate-500 px-2 hover:bg-slate-700 text-white">
+				Limpiar Historial
+			</button>
 			<div className="w-full overflow-x-auto h-[500px]">
 				<table className="w-full border-collapse min-w-full">
 					<thead>
