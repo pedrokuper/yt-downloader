@@ -26,19 +26,30 @@ export async function conversion(
 	return data;
 }
 
-async function getFileName(fileType, url) {
+async function getFileName(url) {
 	const info = await ytdl.getBasicInfo(url);
-	return `${info.videoDetails.title}${fileType}`.replace(/[/\\?%*:|"<>]/g, "-");
+	return `${info.videoDetails.title}`.replace(/[/\\?%*:|"<>]/g, "-");
 }
 
 async function convertToMp3(url, quality = 128, dlLoc, win) {
 	try {
 		console.log("Starting conversion process...");
 		ffmpeg.setFfmpegPath(ffmpegPath);
-		const fileName = await getFileName(".mp3", url);
-		const mp3FilePath = path.join(dlLoc, fileName);
+		// Obtén el nombre base (sin extensión prohibida)
+		const baseName = await getFileName(".mp3", url);
+		const extension = ".mp3";
+		// Construye la ruta inicial (archivo sin contador)
+		let finalName = `${baseName}${extension}`;
+		let finalPath = path.join(dlLoc, finalName);
+		// Si ese nombre ya existe, agrega contador: (1), (2), etc.
+		let count = 1;
+		while (fs.existsSync(finalPath)) {
+			finalName = `${baseName}(${count})${extension}`;
+			finalPath = path.join(dlLoc, finalName);
+			count++;
+		}
 
-		console.log(`File will be saved as: ${fileName}`);
+		console.log("Archivo resultante:", finalPath);
 
 		return new Promise((resolve, reject) => {
 			console.log("Beginning download...");
@@ -49,10 +60,10 @@ async function convertToMp3(url, quality = 128, dlLoc, win) {
 
 			let lastLogged = 0; // To prevent too frequent logging
 
-			const fileWriteStream = fs.createWriteStream(mp3FilePath);
+			const fileWriteStream = fs.createWriteStream(finalPath);
 
 			// // Log the start of download
-			// console.log("Download started");
+			console.log("Download started");
 
 			// // Track download progress
 			// videoStream.on("data", (chunk) => {
@@ -104,17 +115,17 @@ async function convertToMp3(url, quality = 128, dlLoc, win) {
 				})
 				.on("end", async () => {
 					console.log("FFmpeg processing finished");
-					const file = dlLoc + "/" + fileName;
+					const file = dlLoc + "/" + finalName;
 					const fileSize = await getFileSize(file);
 					const fileSizeText = setFileSizeText(fileSize);
 
 					console.log("\n=== Conversion Complete ===");
-					console.log(`File: ${fileName}`);
+					console.log(`File: ${finalName}`);
 					console.log(`Size: ${fileSizeText}`);
 					console.log(`Location: ${dlLoc}`);
 
 					resolve({
-						name: fileName,
+						name: finalName,
 						url: url,
 						size: fileSizeText,
 						location: dlLoc,
