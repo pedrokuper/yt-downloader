@@ -10,11 +10,13 @@
 
 - [ ] Trim Audio to Download
 - [ ] Trim Video to Download
-- [ ] Progress Bar
+- [x] Progress Bar
 
 ### History
 
-- [ ] Clear History
+- [x] Clear History
 - [ ] Sort by Date, Name, Size
 - [ ] Search
 - [ ] Delete file (from history, from disk)
+- [ ] Test Automatizados
+- [ ] Reemplazar libreria x propia

@@ -4,13 +4,12 @@ import { BITRATES, FORMATS, VIDEO_QUALITY } from "./utils/constants";
 import Table from "./components/Table";
 import DownloadProgress from "./components/DownloadProgress";
 function App() {
-	console.log("App");
 	const [downloadHistory, setDownloadHistory] = useState([]);
 
 	const [options, setOptions] = useState({
 		format: "mp3",
-		quality: null,
-		url: "",
+		quality: 128,
+		url: "https://youtu.be/JxP2y_q51IE",
 		path: "",
 	});
 
@@ -97,6 +96,7 @@ function App() {
 				<hr className="m-2" />
 				<div className="flex flex-col gap-4 items-center ">
 					<input
+						value={options.url ?? ""}
 						onChange={handleChange}
 						className="border border-zinc-400 w-1/2 p-2 rounded-xl shadow-lg"
 						type="text"
@@ -151,7 +151,10 @@ function App() {
 					<DownloadProgress />
 				</div>
 				<hr className="m-2" />
-				<Table files={downloadHistory} />
+				<Table
+					files={downloadHistory}
+					setDownloadHistory={setDownloadHistory}
+				/>
 			</section>
 		</>
 	);

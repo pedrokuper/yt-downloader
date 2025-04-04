@@ -13,12 +13,8 @@ const store = new Store({
 	},
 });
 //Declare download history store
-const downloadHistory = new Store({
-	configName: "download-history",
-	defaults: {
-		history: [],
-	},
-});
+let downloadHistory;
+let history;
 
 let mainWindow;
 
@@ -34,6 +30,8 @@ function createWindow(opts = {}) {
 		},
 		...opts,
 	});
+
+	mainWindow.webContents.openDevTools({ mode: "left" });
 
 	mainWindow.on("ready-to-show", () => {
 		mainWindow.show();
@@ -57,8 +55,8 @@ function createWindow(opts = {}) {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-	let his = downloadHistory.get("history") ?? [];
-	downloadHistory.set("history", his); // Initialize history if empty
+	history = downloadHistory?.get("history") ?? [];
+	downloadHistory?.set("history", history); // Initialize history if empty
 	// let { width, height } = store.get("windowBounds");
 	// Set app user model id for windows
 	electronApp.setAppUserModelId("com.electron");
@@ -70,20 +68,20 @@ app.whenReady().then(() => {
 		optimizer.watchWindowShortcuts(window);
 	});
 
-	ipcMain.on("download-update", (event, download) => {
-		event.reply("download-update", download);
-	});
-
-	ipcMain.on("download-progress", (event, download) => {
-		event.reply("download-progress", download);
-	});
-
 	//Main logic for the app. Same principle here. We declare a handle to make it usable from the frontend making a bridge with the preload.js file. This calls conversion, which will send the options from the frontend to the backend and then execute the conversion function and if the download is success, will add to the history.
 	ipcMain.handle("conversion", async (e, opts) => {
+		if (!downloadHistory?.data?.history?.length) {
+			downloadHistory = new Store({
+				configName: "download-history",
+				defaults: {
+					history: [],
+				},
+			});
+		}
 		const win = e.sender.getOwnerBrowserWindow();
 		const response = await conversion(opts, win);
-		his.push(response);
-		downloadHistory.set("history", his);
+		history.push(response);
+		downloadHistory.set("history", history);
 	});
 	//To open the dialog window to save download locations
 	ipcMain.handle("dialog", async (_, method, params) => {
@@ -109,6 +107,15 @@ app.whenReady().then(() => {
 	//NOTE This func return the download-history json, created using the store setter
 	ipcMain.handle("getDownloadHistory", () => {
 		return downloadHistory.get("history");
+	});
+
+	//NOTE This func deletes the download history
+	ipcMain.handle("clearHistory", async (event) => {
+		console.log("Clearing the history");
+		downloadHistory.set("history", []);
+		// Reset the in-memory history array too!
+		history = [];
+		return await downloadHistory.delete();
 	});
 
 	let { width, height } = store.get("windowBounds");
