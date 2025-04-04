@@ -1,7 +1,7 @@
 export default function Table({ files = [], setDownloadHistory }) {
 	if (files.length < 1) return null;
 
-	//TODO - Make into lib/utils
+	// Maneja "abrir carpeta"
 	const handleShowFile = async (location) => {
 		try {
 			const result = await window.electron.openPath(location);
@@ -12,6 +12,8 @@ export default function Table({ files = [], setDownloadHistory }) {
 			console.error("Error opening path:", error);
 		}
 	};
+
+	// Maneja "limpiar historial"
 	const handleClearHistory = async () => {
 		try {
 			const result = await window.electron.onClearHistory();
@@ -22,74 +24,72 @@ export default function Table({ files = [], setDownloadHistory }) {
 	};
 
 	return (
-		<>
-			<button
-				onClick={handleClearHistory}
-				className="bg-slate-500 px-2 hover:bg-slate-700 text-white"
-			>
-				Limpiar Historial
-			</button>
-			<div className="w-full overflow-x-auto h-[500px]">
-				<table className="w-full border-collapse min-w-full">
-					<thead>
-						<tr className="bg-gray-100">
-							<th className="text-left p-2 border-b font-semibold w-48">
-								Nombre
-							</th>
-							<th className="text-left p-2 border-b font-semibold w-64">URL</th>
-							<th className="text-left p-2 border-b font-semibold w-24">
-								Tamaño
-							</th>
-							<th className="text-left p-2 border-b font-semibold flex-1">
-								Ubicación
-							</th>
-							{/* <th className="text-left p-2 border-b font-semibold flex-1">
-								Fecha
-							</th> */}
+		<div className="bg-white p-4 rounded-md shadow-sm">
+			{/* Encabezado de la sección */}
+			<header className="flex items-center justify-between mb-4">
+				<h2 className="text-lg font-semibold">Historial de Descargas</h2>
+				<button
+					onClick={handleClearHistory}
+					className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded transition"
+				>
+					Limpiar Historial
+				</button>
+			</header>
+
+			{/* Contenedor para el scroll */}
+			<div className="border border-gray-200 rounded overflow-auto max-h-80">
+				<table className="min-w-full table-auto text-sm">
+					<thead className="bg-gray-100 sticky top-0">
+						<tr>
+							<th className="px-4 py-2 text-left border-b w-48">Nombre</th>
+							<th className="px-4 py-2 text-left border-b w-64">URL</th>
+							<th className="px-4 py-2 text-left border-b w-24">Tamaño</th>
+							<th className="px-4 py-2 text-left border-b">Ubicación</th>
 						</tr>
 					</thead>
 					<tbody>
 						{files.map((file, index) => (
-							<tr key={index} className="border-b hover:bg-gray-50">
-								<td className="p-2 max-w-[12rem]">
-									<div className="truncate" title={file.name}>
+							<tr key={index} className="hover:bg-gray-50">
+								<td className="px-4 py-2 border-b">
+									<div className="truncate w-44" title={file.name}>
 										{file.name}
 									</div>
 								</td>
-								<td className="p-2 max-w-[16rem]">
-									<div className="truncate">
-										<a
-											className="hover:bg-sky-300 underline"
-											target="_blank"
-											href={file.url}
-											title={file.url}
-										>
-											{file.url}
-										</a>
-									</div>
+								<td className="px-4 py-2 border-b">
+									<a
+										href={file.url}
+										target="_blank"
+										rel="noopener noreferrer"
+										title={file.url}
+										className="underline text-blue-600 hover:text-blue-800 truncate"
+									>
+										{file.url}
+									</a>
 								</td>
-								<td className="p-2 w-24">{file.size}</td>
-								<td className="p-2 max-w-[24rem]">
+								<td className="px-4 py-2 border-b">{file.size}</td>
+								<td className="px-4 py-2 border-b">
 									<div
-										className="truncate cursor-pointer hover:text-blue-600"
-										onClick={() => handleShowFile(file.location)}
+										className="truncate w-64 cursor-pointer hover:text-blue-600"
 										title={file.location}
+										onClick={() => handleShowFile(file.location)}
 									>
 										{file.location}
 									</div>
 								</td>
 							</tr>
 						))}
+
+						{/* Por si está vacío el historial */}
 						{files.length === 0 && (
 							<tr>
 								<td colSpan={4} className="p-4 text-center text-gray-500">
-									No files available
+									No hay descargas registradas
 								</td>
 							</tr>
 						)}
 					</tbody>
 				</table>
 			</div>
-		</>
+		</div>
 	);
 }

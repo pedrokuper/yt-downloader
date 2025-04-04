@@ -9,7 +9,7 @@ import Store from "./lib/store";
 const store = new Store({
 	configName: "user-preferences",
 	defaults: {
-		windowBounds: { width: 800, height: 600 },
+		windowBounds: { width: 1025, height: 800 },
 	},
 });
 //Declare download history store
@@ -102,6 +102,14 @@ app.whenReady().then(() => {
 	//NOTE This func return the default "downloads" path for different OS (app.getPath). The ipcMain.handle part is to connect the preload with the renderer, to avoid manipulating the main with the renderer, which is the frontend part.
 	ipcMain.handle("defaultDownloadLoc", () => {
 		return app.getPath("downloads");
+	});
+
+	ipcMain.on("download-update", (event, download) => {
+		event.reply("download-update", download);
+	});
+
+	ipcMain.on("download-progress", (event, download) => {
+		event.reply("download-progress", download);
 	});
 
 	//NOTE This func return the download-history json, created using the store setter

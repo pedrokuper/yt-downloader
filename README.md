@@ -4,7 +4,7 @@
 
 ### General
 
-- [ ] Improve UX/UI based on references
+- [x] Improve UX/UI based on references
 
 ### Conversion/Download
 
