@@ -1,4 +1,4 @@
-export default function Table({ files = [] }) {
+export default function Table({ files = [], setDownloadHistory }) {
 	if (files.length < 1) return null;
 
 	//TODO - Make into lib/utils
@@ -12,10 +12,21 @@ export default function Table({ files = [] }) {
 			console.error("Error opening path:", error);
 		}
 	};
+	const handleClearHistory = async () => {
+		try {
+			const result = await window.electron.onClearHistory();
+			if (result) setDownloadHistory([]);
+		} catch (error) {
+			console.error("Error handleClearHistory:", error);
+		}
+	};
 
 	return (
 		<>
-			<button className="bg-slate-500 px-2 hover:bg-slate-700 text-white">
+			<button
+				onClick={handleClearHistory}
+				className="bg-slate-500 px-2 hover:bg-slate-700 text-white"
+			>
 				Limpiar Historial
 			</button>
 			<div className="w-full overflow-x-auto h-[500px]">

@@ -4,7 +4,6 @@ import { BITRATES, FORMATS, VIDEO_QUALITY } from "./utils/constants";
 import Table from "./components/Table";
 import DownloadProgress from "./components/DownloadProgress";
 function App() {
-	console.log("App");
 	const [downloadHistory, setDownloadHistory] = useState([]);
 
 	const [options, setOptions] = useState({
@@ -152,7 +151,10 @@ function App() {
 					<DownloadProgress />
 				</div>
 				<hr className="m-2" />
-				<Table files={downloadHistory} />
+				<Table
+					files={downloadHistory}
+					setDownloadHistory={setDownloadHistory}
+				/>
 			</section>
 		</>
 	);
