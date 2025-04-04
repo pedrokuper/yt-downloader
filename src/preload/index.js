@@ -32,6 +32,9 @@ try {
 				ipcRenderer.removeListener("download-progress", subscription);
 			};
 		},
+		onClearHistory: async () => {
+			return await ipcRenderer.invoke("clearHistory");
+		},
 	});
 } catch (error) {
 	console.error(error);
