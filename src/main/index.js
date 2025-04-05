@@ -31,6 +31,13 @@ function createWindow(opts = {}) {
 		...opts,
 	});
 
+	downloadHistory = new Store({
+		configName: "download-history",
+		defaults: {
+			history: [],
+		},
+	});
+
 	mainWindow.webContents.openDevTools({ mode: "left" });
 
 	mainWindow.on("ready-to-show", () => {
