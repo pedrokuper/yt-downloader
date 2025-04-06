@@ -11,6 +11,7 @@
 - [ ] Trim Audio to Download
 - [ ] Trim Video to Download
 - [x] Progress Bar
+- [ ] Last folder (preferences)
 
 ### History
 
