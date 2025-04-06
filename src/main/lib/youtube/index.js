@@ -112,13 +112,13 @@ class Mp3Converter extends BaseConverter {
 class Mp4Converter extends BaseConverter {
 	constructor(url, quality, downloadDir) {
 		super(url, quality, downloadDir);
-		// Mapeo de calidades a resoluciones
 		this.qualityMap = {
 			tiny: { res: "144p" },
 			small: { res: "240p" },
 			medium: { res: "360p" },
 			hd: { res: "720p" },
 			large: { res: "1080p" },
+			veryLarge: { res: "2160p" },
 		};
 	}
 
@@ -161,7 +161,6 @@ class Mp4Converter extends BaseConverter {
 		const targetRes = this.qualityMap[this.quality]?.res || "360p";
 		const videoFormats = info.formats.filter((f) => f.hasVideo && !f.hasAudio);
 		const audioFormats = info.formats.filter((f) => f.hasAudio && !f.hasVideo);
-
 		const videoFormat = this.getBestMatchingFormat(videoFormats, targetRes);
 		const audioFormat = audioFormats.sort(
 			(a, b) => (b.audioBitrate || 0) - (a.audioBitrate || 0)

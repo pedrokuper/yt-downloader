@@ -56,26 +56,20 @@ function App() {
 			dialogConfig
 		);
 		if (path) {
-			setOptions((prevOpts) => ({
-				...prevOpts,
-				path: path,
-			}));
+			setOptions((prevOpts) => ({ ...prevOpts, path: path }));
 		}
 	}
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-		setOptions((prevOpts) => ({
-			...prevOpts,
-			[name]: value,
-		}));
+		setOptions((prevOpts) => ({ ...prevOpts, [name]: value }));
 	};
 
 	const toggleFormat = () => {
 		setOptions((prevOpts) => ({
 			...prevOpts,
 			format: prevOpts.format === "mp3" ? "mp4" : "mp3",
-			quality: prevOpts.format === "mp3" ? "medium" : "128", // Set default quality for the new format
+			quality: prevOpts.format === "mp3" ? "medium" : "128",
 		}));
 	};
 
@@ -92,10 +86,7 @@ function App() {
 
 	async function handleDefaultDownloadPath() {
 		const defaultPath = await window.electron.defaultDownloadLoc();
-		setOptions((prevOpts) => ({
-			...prevOpts,
-			path: defaultPath,
-		}));
+		setOptions((prevOpts) => ({ ...prevOpts, path: defaultPath }));
 	}
 
 	const LABEL = options?.format === "mp3" ? "Bitrate" : "Calidad de Video";

@@ -16,4 +16,5 @@ export const VIDEO_QUALITY = [
 	{ value: "small", label: "Baja" },
 	{ value: "medium", label: "Media" },
 	{ value: "large", label: "Alta" },
+	{ value: "veryLarge", label: "Muy Alta" },
 ];
