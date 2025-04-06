@@ -2,9 +2,6 @@ import ffmpeg from "fluent-ffmpeg";
 import ffmpegPath from "ffmpeg-static";
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-/**
- * FfmpegProcessor encapsula la lógica para procesar archivos con ffmpeg.
- */
 export class FfmpegProcessor {
 	static process(inputPaths, outputOptions, outputPath, progressCallback) {
 		return new Promise((resolve, reject) => {
@@ -15,9 +12,8 @@ export class FfmpegProcessor {
 			command
 				.outputOptions(outputOptions)
 				.on("progress", (progress) => {
-					if (progress.percent && progressCallback) {
-						progressCallback(Math.round(progress.percent));
-					}
+					// Se envía el objeto completo de progreso
+					if (progressCallback) progressCallback(progress);
 				})
 				.on("end", () => resolve(outputPath))
 				.on("error", (err) => reject(err))

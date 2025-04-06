@@ -139,9 +139,11 @@ class Mp4Converter extends BaseConverter {
 		return best;
 	}
 
-	async convert(progressCallback) {
+	async convert(progressCallback, win) {
 		console.log("Iniciando conversión a MP4...");
 		const info = await ytdl.getInfo(this.url);
+		// Duración total en segundos
+		const totalDuration = parseFloat(info.videoDetails.lengthSeconds);
 		const baseName = (await FileManager.getFileName(this.url)) + ".mp4";
 		const outputPath = path.join(this.downloadDir, baseName);
 
@@ -197,14 +199,44 @@ class Mp4Converter extends BaseConverter {
 			).then(() => console.log("Descarga de audio completada")),
 		]);
 
-		// Fusión de video y audio con FFmpeg
+		// Función auxiliar para parsear un timemark (ej: "00:01:23.45") a segundos
+		const parseTimeMark = (timemark) => {
+			const parts = timemark.split(":").map(parseFloat);
+			// Por ejemplo, "00:01:23.45" se transforma a segundos
+			return parts[0] * 3600 + parts[1] * 60 + parts[2];
+		};
+
+		// Fusión de video y audio con FFmpeg con notificación de progreso
 		await FfmpegProcessor.process(
 			[tempVideoPath, tempAudioPath],
 			["-c:v copy", "-c:a aac"],
 			outputPath,
 			(progress) => {
-				if (progressCallback) progressCallback(progress);
-				console.log(`Procesando: ${progress}% completado`);
+				if (progress.timemark) {
+					const currentTime = parseTimeMark(progress.timemark);
+					const percent = totalDuration
+						? (currentTime / totalDuration) * 100
+						: 0;
+					if (win) {
+						win.webContents.send("download-progress", {
+							type: "download",
+							progress: parseFloat(percent.toFixed(2)),
+						});
+					}
+					if (progressCallback)
+						progressCallback(parseFloat(percent.toFixed(2)));
+					console.log(`Procesando: ${percent.toFixed(2)}% completado`);
+				} else if (progress.percent) {
+					// En caso de que ffmpeg devuelva progress.percent
+					if (win) {
+						win.webContents.send("download-progress", {
+							type: "download",
+							progress: progress.percent,
+						});
+					}
+					if (progressCallback) progressCallback(progress.percent);
+					console.log(`Procesando: ${progress.percent}% completado`);
+				}
 			}
 		);
 
@@ -261,7 +293,7 @@ export async function conversion(
 					progress: progress,
 				});
 			}
-		});
+		}, win);
 	}
 	return data;
 }
