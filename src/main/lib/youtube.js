@@ -36,7 +36,7 @@ async function convertToMp3(url, quality = 128, dlLoc, win) {
 		console.log("Starting conversion process...");
 		ffmpeg.setFfmpegPath(ffmpegPath);
 		// Obtén el nombre base (sin extensión prohibida)
-		const baseName = await getFileName(".mp3", url);
+		const baseName = await getFileName(url);
 		const extension = ".mp3";
 		// Construye la ruta inicial (archivo sin contador)
 		let finalName = `${baseName}${extension}`;
