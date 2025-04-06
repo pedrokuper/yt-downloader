@@ -75,7 +75,7 @@ function App() {
 		setOptions((prevOpts) => ({
 			...prevOpts,
 			format: prevOpts.format === "mp3" ? "mp4" : "mp3",
-			quality: prevOpts.format === "mp3" ? "720" : "128", // Set default quality for the new format
+			quality: prevOpts.format === "mp3" ? "medium" : "128", // Set default quality for the new format
 		}));
 	};
 
