@@ -6,6 +6,7 @@ import ffmpegPath from "ffmpeg-static";
 import { promisify } from "util";
 import { FileManager } from "./FileManager.js";
 import { FfmpegProcessor } from "./FfmpegProcessor.js";
+import dayjs from "dayjs";
 const pipeline = promisify(require("stream").pipeline);
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -91,6 +92,7 @@ class Mp3Converter extends BaseConverter {
 						url: this.url,
 						size: fileSizeText,
 						location: this.downloadDir,
+						date: dayjs().format("DD-MM-YYYY hh:mm:ss"),
 					});
 				});
 
@@ -258,6 +260,7 @@ class Mp4Converter extends BaseConverter {
 			url: this.url,
 			size: fileSizeText,
 			location: this.downloadDir,
+			date: dayjs().format("DD-MM-YYYY hh:mm:ss"),
 		};
 	}
 }

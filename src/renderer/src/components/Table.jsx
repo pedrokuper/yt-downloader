@@ -1,7 +1,6 @@
 export default function Table({ files = [], setDownloadHistory }) {
 	if (files.length < 1) return null;
 
-	// Maneja "abrir carpeta"
 	const handleShowFile = async (location) => {
 		try {
 			const result = await window.electron.openPath(location);
@@ -13,7 +12,6 @@ export default function Table({ files = [], setDownloadHistory }) {
 		}
 	};
 
-	// Maneja "limpiar historial"
 	const handleClearHistory = async () => {
 		try {
 			const result = await window.electron.onClearHistory();
@@ -44,6 +42,7 @@ export default function Table({ files = [], setDownloadHistory }) {
 							<th className="px-4 py-2 text-left border-b w-48">Nombre</th>
 							<th className="px-4 py-2 text-left border-b w-64">URL</th>
 							<th className="px-4 py-2 text-left border-b w-24">Tamaño</th>
+							<th className="px-4 py-2 text-left border-b w-44">Fecha</th>
 							<th className="px-4 py-2 text-left border-b">Ubicación</th>
 						</tr>
 					</thead>
@@ -67,6 +66,8 @@ export default function Table({ files = [], setDownloadHistory }) {
 									</a>
 								</td>
 								<td className="px-4 py-2 border-b">{file.size}</td>
+
+								<td className="px-4 py-2 border-b">{file?.date}</td>
 								<td className="px-4 py-2 border-b">
 									<div
 										className="truncate w-64 cursor-pointer hover:text-blue-600"
@@ -79,7 +80,6 @@ export default function Table({ files = [], setDownloadHistory }) {
 							</tr>
 						))}
 
-						{/* Por si está vacío el historial */}
 						{files.length === 0 && (
 							<tr>
 								<td colSpan={4} className="p-4 text-center text-gray-500">
