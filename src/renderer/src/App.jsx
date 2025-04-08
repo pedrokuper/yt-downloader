@@ -4,10 +4,13 @@ import { BITRATES, VIDEO_QUALITY } from "./utils/constants";
 import Table from "./components/Table";
 import DownloadProgress from "./components/DownloadProgress";
 import Header from "./components/Header";
+import VideoPreview from "./components/VideoPreview";
+import { isYouTubeUrl } from "./utils/helpers";
 
 function App() {
 	const [downloadHistory, setDownloadHistory] = useState([]);
 	const [isDownloading, setIsDownloading] = useState(false);
+	const [urlError, setUrlError] = useState(""); // for the error message
 
 	const [options, setOptions] = useState({
 		format: "mp3",
@@ -63,6 +66,16 @@ function App() {
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setOptions((prevOpts) => ({ ...prevOpts, [name]: value }));
+
+		if (name === "url") {
+			if (value === "") {
+				setUrlError(""); // clear if empty
+			} else if (!isYouTubeUrl(value)) {
+				setUrlError("La URL no es válida o no es de YouTube.");
+			} else {
+				setUrlError(""); // valid URL
+			}
+		}
 	};
 
 	const toggleFormat = () => {
@@ -102,14 +115,21 @@ function App() {
 							<input
 								value={options.url ?? ""}
 								onChange={handleChange}
-								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+								className={`w-full p-3 border rounded-lg shadow-sm focus:ring-2 ${
+									urlError
+										? "border-red-500 focus:ring-red-500"
+										: "border-gray-300 focus:ring-blue-500 focus:border-transparent"
+								}`}
 								type="text"
 								name="url"
 								id="url"
 								placeholder="Pega la URL de YouTube"
 							/>
+							{urlError && (
+								<p className="mt-1 text-sm text-red-600">{urlError}</p>
+							)}
 						</div>
-
+						<VideoPreview videoUrl={options?.url} />
 						<div className="flex flex-col gap-4">
 							{/* Format Toggle Switch */}
 							<div className="flex items-center gap-3">

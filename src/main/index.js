@@ -94,6 +94,7 @@ app.whenReady().then(() => {
 	ipcMain.handle("dialog", async (_, method, params) => {
 		const { filePaths } = await dialog[method](params);
 		const [path] = filePaths;
+		store.set("lastDowloadLocation", path);
 		return path;
 	});
 	//To open default or selected download location
@@ -108,7 +109,7 @@ app.whenReady().then(() => {
 
 	//NOTE This func return the default "downloads" path for different OS (app.getPath). The ipcMain.handle part is to connect the preload with the renderer, to avoid manipulating the main with the renderer, which is the frontend part.
 	ipcMain.handle("defaultDownloadLoc", () => {
-		return app.getPath("downloads");
+		return store.get("lastDowloadLocation") || app.getPath("downloads");
 	});
 
 	ipcMain.on("download-update", (event, download) => {
