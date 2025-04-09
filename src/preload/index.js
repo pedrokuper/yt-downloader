@@ -35,6 +35,9 @@ try {
 		onClearHistory: async () => {
 			return await ipcRenderer.invoke("clearHistory");
 		},
+		onFileDelete: async (file, i) => {
+			return await ipcRenderer.invoke("onFileDelete", file, i);
+		},
 	});
 } catch (error) {
 	console.error(error);

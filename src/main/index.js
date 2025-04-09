@@ -1,5 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
 import { join } from "path";
+import fs from "fs";
+import { access, constants } from "node:fs";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { conversion } from "./lib/youtube";
@@ -126,12 +128,32 @@ app.whenReady().then(() => {
 	});
 
 	//NOTE This func deletes the download history
-	ipcMain.handle("clearHistory", async (event) => {
+	ipcMain.handle("clearHistory", async (_) => {
 		console.log("Clearing the history");
 		downloadHistory.set("history", []);
 		// Reset the in-memory history array too!
 		history = [];
 		return await downloadHistory.delete();
+	});
+
+	//TODO Falta indicarle al frontend que debe reiniciar el historial.
+	ipcMain.handle("onFileDelete", async (_, fileData, i) => {
+		const file = `${fileData.location}/${fileData.name}`;
+		access(file, constants.F_OK, (err) => {
+			if (!err) {
+				fs.unlink(file, (err) => {
+					if (err) {
+						console.error("Error al remover el archivo:", err);
+						return;
+					}
+					const history = downloadHistory.get("history");
+					history.splice(i, 1);
+				});
+			} else {
+				console.log("File does not exist");
+				console.log(err);
+			}
+		});
 	});
 
 	let { width, height } = store.get("windowBounds");

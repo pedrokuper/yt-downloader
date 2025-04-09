@@ -1,3 +1,5 @@
+import Actions from "./Actions";
+
 export default function Table({ files = [], setDownloadHistory }) {
 	if (files.length < 1) return null;
 
@@ -19,6 +21,10 @@ export default function Table({ files = [], setDownloadHistory }) {
 		} catch (error) {
 			console.error("Error handleClearHistory:", error);
 		}
+	};
+
+	const handleDelete = async (file, i) => {
+		await window.electron.onFileDelete(file, i);
 	};
 
 	return (
@@ -43,14 +49,15 @@ export default function Table({ files = [], setDownloadHistory }) {
 							<th className="px-4 py-2 text-left border-b w-64">URL</th>
 							<th className="px-4 py-2 text-left border-b w-24">Tamaño</th>
 							<th className="px-4 py-2 text-left border-b w-44">Fecha</th>
-							<th className="px-4 py-2 text-left border-b">Ubicación</th>
+							<th className="px-4 py-2 text-left border-b w-24">Ubicación</th>
+							<th className="px-4 py-2 text-left border-b w-24">Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
-						{files.map((file, index) => (
-							<tr key={index} className="hover:bg-gray-50">
+						{files.map((file, i) => (
+							<tr key={i} className="hover:bg-gray-50">
 								<td className="px-4 py-2 border-b">
-									<div className="truncate w-44" title={file.name}>
+									<div className="truncate w-80" title={file.name}>
 										{file.name}
 									</div>
 								</td>
@@ -76,6 +83,9 @@ export default function Table({ files = [], setDownloadHistory }) {
 									>
 										{file.location}
 									</div>
+								</td>
+								<td className="px-4 py-2 border-b">
+									<Actions handleDelete={() => handleDelete(file, i)} />
 								</td>
 							</tr>
 						))}
