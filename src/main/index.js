@@ -15,10 +15,7 @@ const store = new Store({
 	},
 });
 //Declare download history store
-let downloadHistory;
-let history;
-
-let mainWindow;
+let downloadHistory, history, mainWindow;
 
 function createWindow(opts = {}) {
 	mainWindow = new BrowserWindow({
