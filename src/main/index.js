@@ -142,16 +142,23 @@ app.whenReady().then(() => {
 						}
 						const history = downloadHistory.get("history");
 						history.splice(i, 1);
-						resolve(true);
-					});
-				} else {
-					console.log("File does not exist");
-					console.log(err);
-					reject(false);
-				}
-			});
-		});
-		return hasBeenDeleted;
+			return true;
+		} catch (err) {
+			console.error("Error occurred in handler for 'onFileDelete':", err);
+			return false;
+		}
+	});
+
+	ipcMain.handle("onFilePlay", async (_, fileData) => {
+		try {
+			const filePath = path.normalize(`${fileData.location}/${fileData.name}`);
+			const fileUrl = `file://${filePath}`;
+			console.log(`Intentando abrir: ${fileUrl}`);
+			await shell.openExternal(fileUrl);
+			console.log("Archivo abierto correctamente");
+		} catch (error) {
+			console.error(`Error al abrir el archivo: ${error}`);
+		}
 	});
 
 	let { width, height } = store.get("windowBounds");

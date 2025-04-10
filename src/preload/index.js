@@ -38,6 +38,9 @@ try {
 		onFileDelete: async (file, i) => {
 			return await ipcRenderer.invoke("onFileDelete", file, i);
 		},
+		onFilePlay: async (file, i) => {
+			return await ipcRenderer.invoke("onFilePlay", file);
+		},
 	});
 } catch (error) {
 	console.error(error);

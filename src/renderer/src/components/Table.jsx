@@ -36,6 +36,11 @@ export default function Table({ files = [], setDownloadHistory }) {
 		}
 	};
 
+	const handlePlay = async (file) => {
+		window.electron.onFilePlay(file);
+	};
+
+	//TODO Refactorizar, no se si necesito mandar el archivo completo si estoy enviando el indice, podria sacarlo directamente del historial
 	return (
 		<div className="bg-white p-4 rounded-md shadow-sm">
 			{/* Encabezado de la sección */}
@@ -94,7 +99,10 @@ export default function Table({ files = [], setDownloadHistory }) {
 									</div>
 								</td>
 								<td className="px-4 py-2 border-b">
-									<Actions handleDelete={() => handleDelete(file, i)} />
+									<Actions
+										handlePlay={() => handlePlay(file)}
+										handleDelete={() => handleDelete(file, i)}
+									/>
 								</td>
 							</tr>
 						))}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Actions({ handleDelete }) {
+export default function Actions({ handleDelete, handlePlay }) {
 	const [showConfirm, setShowConfirm] = useState(false);
 
 	const confirmDelete = () => {
@@ -8,10 +8,14 @@ export default function Actions({ handleDelete }) {
 		setShowConfirm(false);
 	};
 
+	const play = () => {
+		handlePlay();
+	};
+
 	return (
 		<>
 			<ul className="flex items-center gap-2 p-0 m-0 list-none">
-				<li id="play" className="w-6 cursor-pointer">
+				<li id="play" className="w-6 cursor-pointer" onClick={play}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 384 512"
