@@ -1,12 +1,10 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
 import { join } from "path";
-import fs from "fs";
-import { access, constants } from "node:fs";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { conversion } from "./lib/youtube";
 import Store from "./lib/store";
-
+import path from "path";
 //Declare preferences store
 const store = new Store({
 	configName: "user-preferences",
@@ -131,17 +129,11 @@ app.whenReady().then(() => {
 	});
 
 	ipcMain.handle("onFileDelete", async (_, fileData, i) => {
-		const file = `${fileData.location}/${fileData.name}`;
-		const hasBeenDeleted = new Promise((resolve, reject) => {
-			access(file, constants.F_OK, (err) => {
-				if (!err) {
-					fs.unlink(file, (err) => {
-						if (err) {
-							console.error("Error al remover el archivo:", err);
-							return;
-						}
-						const history = downloadHistory.get("history");
-						history.splice(i, 1);
+		const file = path.join(fileData.location, fileData.name);
+		try {
+			await shell.trashItem(file);
+			const history = downloadHistory.get("history");
+			history.splice(i, 1);
 			return true;
 		} catch (err) {
 			console.error("Error occurred in handler for 'onFileDelete':", err);
