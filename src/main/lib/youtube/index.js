@@ -241,7 +241,6 @@ class Mp4Converter extends BaseConverter {
 			}
 		);
 
-		// Limpieza de archivos temporales
 		fs.unlink(tempVideoPath, (err) => {
 			if (err)
 				console.error("Error al remover el archivo de video temporal:", err);

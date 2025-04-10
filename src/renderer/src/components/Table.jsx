@@ -24,7 +24,16 @@ export default function Table({ files = [], setDownloadHistory }) {
 	};
 
 	const handleDelete = async (file, i) => {
-		await window.electron.onFileDelete(file, i);
+		try {
+			const deleted = await window.electron.onFileDelete(file, i);
+			if (deleted) {
+				setDownloadHistory((prevHistory) => {
+					return prevHistory.filter((_, index) => index !== i);
+				});
+			}
+		} catch (e) {
+			console.error(e);
+		}
 	};
 
 	return (

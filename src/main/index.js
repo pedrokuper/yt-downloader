@@ -119,38 +119,39 @@ app.whenReady().then(() => {
 		event.reply("download-progress", download);
 	});
 
-	//NOTE This func return the download-history json, created using the store setter
 	ipcMain.handle("getDownloadHistory", () => {
 		return downloadHistory.get("history");
 	});
 
-	//NOTE This func deletes the download history
 	ipcMain.handle("clearHistory", async (_) => {
 		console.log("Clearing the history");
 		downloadHistory.set("history", []);
-		// Reset the in-memory history array too!
 		history = [];
 		return await downloadHistory.delete();
 	});
 
-	//TODO Falta indicarle al frontend que debe reiniciar el historial.
 	ipcMain.handle("onFileDelete", async (_, fileData, i) => {
 		const file = `${fileData.location}/${fileData.name}`;
-		access(file, constants.F_OK, (err) => {
-			if (!err) {
-				fs.unlink(file, (err) => {
-					if (err) {
-						console.error("Error al remover el archivo:", err);
-						return;
-					}
-					const history = downloadHistory.get("history");
-					history.splice(i, 1);
-				});
-			} else {
-				console.log("File does not exist");
-				console.log(err);
-			}
+		const hasBeenDeleted = new Promise((resolve, reject) => {
+			access(file, constants.F_OK, (err) => {
+				if (!err) {
+					fs.unlink(file, (err) => {
+						if (err) {
+							console.error("Error al remover el archivo:", err);
+							return;
+						}
+						const history = downloadHistory.get("history");
+						history.splice(i, 1);
+						resolve(true);
+					});
+				} else {
+					console.log("File does not exist");
+					console.log(err);
+					reject(false);
+				}
+			});
 		});
+		return hasBeenDeleted;
 	});
 
 	let { width, height } = store.get("windowBounds");
